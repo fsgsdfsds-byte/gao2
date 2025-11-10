@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>有道领世课表1.0pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4F46E5',
+            secondary: '#818CF8',
+            success: '#10B981',
+            danger: '#EF4444',
+            warning: '#F59E0B',
+          },
+          fontFamily: {
+            sans: ['Microsoft YaHei', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .shadow-custom {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+      .bg-blur {
+        backdrop-filter: blur(8px);
+      }
+      .transition-all-300 {
+        transition: all 300ms ease-in-out;
+      }
+      .border-hover {
+        transition: border-color 0.2s;
+      }
+      .border-hover:hover {
+        border-color: #818CF8;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- 页面标题 -->
+    <header class="text-center mb-8">
+      <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-800 mb-2">有道领世课表1.0pro</h1>
+      <p class="text-gray-600">上方编辑，下方预览，一条龙服务</p>
+    </header>
+
+    <!-- 主要内容区 -->
+    <div class="space-y-8">
+      <!-- 编辑区（上方） -->
+      <div class="bg-white rounded-xl shadow-custom p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+          <i class="fa fa-edit mr-2 text-primary"></i> 编辑区
+        </h2>
+
+        <!-- 渠道选项 -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+            <i class="fa fa-sitemap mr-2 text-primary"></i> 渠道选项
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <label class="border-2 border-primary bg-primary/10 rounded-lg p-4 cursor-pointer transition-all-300 hover:shadow-md">
+              <input type="radio" name="channel" value="h3" class="hidden" checked>
+              <div class="flex flex-col items-center">
+                <div class="w-16 h-16 rounded-md bg-primary/20 flex items-center justify-center mb-2">
+                  <i class="fa fa-user-circle text-primary text-2xl"></i>
+                </div>
+                <span class="font-medium text-primary">胡源领衔</span>
+              </div>
+            </label>
+            
+            <label class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all-300 hover:shadow-md">
+              <input type="radio" name="channel" value="b3" class="hidden">
+              <div class="flex flex-col items-center">
+                <div class="w-16 h-16 rounded-md bg-gray-200 flex items-center justify-center mb-2">
+                  <i class="fa fa-user-circle text-gray-400 text-2xl"></i>
+                </div>
+                <span class="font-medium text-gray-700">白瑞芳领衔</span>
+              </div>
+            </label>
+            
+            <label class="border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all-300 hover:shadow-md">
+              <input type="radio" name="channel" value="j3" class="hidden">
+              <div class="flex flex-col items-center">
+                <div class="w-16 h-16 rounded-md bg-gray-200 flex items-center justify-center mb-2">
+                  <i class="fa fa-book text-gray-400 text-2xl"></i>
+                </div>
+                <span class="font-medium text-gray-700">教辅类</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 课程编辑 -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+            <i class="fa fa-calendar mr-2 text-primary"></i> 课程编辑
+          </h3>
+          
+          <!-- 表头 -->
+          <div class="grid grid-cols-[1fr_1fr_2fr_1fr] gap-2 mb-2 text-sm font-medium text-gray-700 px-2">
+            <div>时间</div>
+            <div>主讲</div>
+            <div>课程内容</div>
+            <div>分值占比</div>
+          </div>
+          
+          <!-- 课程列表 -->
+          <div id="coursesContainer" class="space-y-3">
+            <!-- 课程项会通过JavaScript动态生成 -->
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="space-y-4">
+          <button id="generateBtn" class="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg shadow-md transition-all flex items-center justify-center font-medium text-lg">
+            <i class="fa fa-magic mr-2"></i> 生成课表
+          </button>
+          <div id="bonusCourseSection" class="w-full bg-secondary hover:bg-secondary/90 text-white py-3 rounded-lg shadow-md transition-all flex flex-wrap items-center gap-3 px-4">
+            <span class="font-medium"><i class="fa fa-gift mr-2"></i> 添加赠课</span>
+            <select id="bonusTeacherSelect" class="bg-white/20 border border-white/30 rounded text-white px-2 py-1 focus:outline-none focus:ring-2 focus:ring-white/50">
+              <option value="">请选择教师</option>
+              <option value="胡源">胡源</option>
+              <option value="白瑞芳">白瑞芳</option>
+            </select>
+            <button id="cancelBonusBtn" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm transition-all">
+              <i class="fa fa-times mr-1"></i> 取消赠课
+            </button>
+          </div>
+          <button id="downloadPreviewBtn" class="w-full bg-success hover:bg-success/90 text-white py-3 rounded-lg shadow-md transition-all flex items-center justify-center font-medium text-lg">
+            <i class="fa fa-download mr-2"></i> 下载课表
+          </button>
+          <!-- 创意分天课表按钮 -->
+          <button id="dailyScheduleBtn" class="w-full relative overflow-hidden group">
+            <!-- 背景渐变层 -->
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-warning rounded-lg"></div>
+            <!-- 叠加装饰层 -->
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.15),transparent_70%)]"></div>
+            <!-- 内容层 -->
+            <div class="relative z-10 py-4 px-6 rounded-lg text-white font-bold text-lg flex items-center justify-center shadow-lg">
+              <span class="flex items-center">
+                <i class="fa fa-calendar-plus-o mr-3 text-xl"></i>
+                <span class="tracking-wide">分天课表视图</span>
+                <i class="fa fa-angle-right ml-3 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- 成品区（下方） -->
+      <div>
+        <div class="bg-white rounded-xl shadow-custom p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fa fa-eye mr-2 text-primary"></i> 成品预览
+          </h2>
+          
+          <!-- 预览容器 -->
+          <div class="flex justify-center">
+            <div id="previewContainer" class="relative w-[1080px] h-[810px] bg-gray-100 border border-gray-200 rounded-lg overflow-hidden">
+              <!-- 背景图片 -->
+              <img id="previewBackground" src="./h2.png" class="absolute inset-0 w-full h-full object-contain" alt="背景图片">
+              
+              <!-- 老师头像容器 -->
+              <div id="teachersAvatarsContainer" class="absolute top-[16%] left-0 right-0 flex justify-center space-x-6 px-4">
+                <!-- 老师头像将动态生成在这里 -->
+              </div>
+              
+              <!-- 课程表格容器 -->
+       <!-- 课程表格容器 -->
+      <div id="tableContainer" class="absolute top-[0%] ml-6 w-[93%] px-2">
+        <!-- 赠课表格将动态添加到预览容器底部 -->
+                <table class="w-full bg-white/90 backdrop-blur-sm border-collapse shadow-md rounded-lg overflow-hidden">
+                  <col style="width: 20%">
+                    <col style="width: 12%">
+                    <col style="width: 50%">
+                    <col style="width: 10%">
+                  <thead>
+                    <tr class="bg-gradient-to-r from-blue-50 to-indigo-50 shadow-sm">
+                      <th class="border border-blue-100 p-0.5 py-3 font-bold text-blue-800 text-base text-center" colspan="1">时间</th>
+                      <th class="border border-blue-100 p-0.5 py-3 font-bold text-blue-800 text-base text-center">主讲</th>
+                      <th class="border border-blue-100 p-0.5 py-3 font-bold text-blue-800 text-base text-center" style="text-align: center;">课程内容</th>
+                      <th class="border border-blue-100 p-0.5 py-3 font-bold text-blue-800 text-base text-center">考试分值</th>
+                    </tr>
+                  </thead>
+                  <tbody id="previewTableBody">
+                    <!-- 课程内容会在这里动态生成 -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div id="successToast" class="fixed top-4 right-4 bg-success text-white px-6 py-3 rounded-lg shadow-lg flex items-center transform translate-x-full transition-transform duration-300 opacity-0">
+    <i class="fa fa-check-circle mr-2"></i>
+    <span>操作成功！</span>
+  </div>
+
+  <script>
+    // 教师列表
+    const teachers = ['胡源', '李辉', '漆纯伊', '李楠', '白瑞芳', '姜博杨', '高东辉'];
+    
+    // 教师图片和介绍信息
+    const teacherInfo = {
+      '李辉': { img: './4.png', title: '英语-李辉', desc: '18年英语教学经验\n多年辅导教学经验\n多次受邀教育类电视节目' },
+      '漆纯伊': { img: './6.png', title: '英语-漆纯伊', desc: '诺丁汉大学海归硕士\n凤凰网独家专访名师\n北大特邀客座讲师' },
+      '李楠': { img: './2.png', title: '物理-李楠', desc: '清华大学本硕连读\n中国高中竞赛一等奖\n"楠得考学法"创始人' },
+      '姜博杨': { img: './5.png', title: '语文-姜博杨', desc: '海归双料硕士\n有道领世语文负责人\n人民大学出版社签约作家' },
+      '高东辉' :{ img: './1.png', title: '化学-高东辉', desc: '精研高考20年\n独创"步骤化化学"\n出版《艾丁教你高效学习》' },
+      '胡源' :{ img: './3.png', title: '数学-胡源', desc: '北京大学元培学院毕业\n独创"反命题教学法"\n擅长抽象问题具体化' },
+      '白瑞芳': { img: './9.jpg', title: '数学-白瑞芳', desc: '中国人民大学毕业\n河南跳级学霸更懂学习\n基础薄弱同学救星' }
+    };
+    
+    // 存储需要在预览区域显示头像的老师列表
+    let teachersToDisplay = [];
+    
+    // 主讲与课程内容的固定搭配
+    const courseContentMap = {
+      '胡源': [
+        '【规划篇】如何在高二取得领先',
+        '【导学课】如何利用教辅书，助力高二取得领先',
+        '【数学规划】圆模型妙解定比三角形',
+        '【数学规划】妙解圆锥曲线定点问题'
+      ],
+      '白瑞芳': [
+        '【规划篇】如何在高二取得领先',
+        '【数学规划】圆模型妙解定比三角形',
+        '【数学规划】妙解圆锥曲线定点问题'
+      ],
+      '李楠': [
+        '【物理规划】科学思维妙解高中天体物理问题',
+        '【物理规划】科学思维妙解电场粒子运动问题'
+      ],
+      '姜博杨': ['【语文规划】妙笔生花—零基础升格一类文'],
+      '高东辉': ['【化学规划】极简法掌握电化学解题思路'],
+      '漆纯伊': ['【英语规划】英语阅读大招突破秘籍'],
+      '李辉': ['【英语规划】英语阅读大招突破秘籍']
+    };
+    
+    // 课程内容与分值占比的映射关系
+    const contentScoreMap = {
+        '【规划篇】如何在高二取得领先': '家长必听',
+        '【导学课】如何利用教辅书，助力高二取得领先': '家长必听',
+        '【数学规划】圆模型妙解定比三角形': '10~15分',
+        '【物理规划】科学思维妙解高中天体物理问题': '10~15分',
+        '【语文规划】妙笔生花—零基础升格一类文': '20~30分',
+        '【化学规划】极简法掌握电化学解题思路': '10~15分',
+        '【物理规划】科学思维妙解电场粒子运动问题': '10~15分',
+        '【英语规划】英语阅读大招突破秘籍': '30~40分',
+        '【数学规划】妙解圆锥曲线定点问题': '5~12分'
+      };
+    
+    // 是否启用胡源领衔（用于控制是否启用内容绑定）
+    let isH3Channel = true;
+    
+    // 默认课程数据
+    const defaultCourses = [
+        { id: 1, day: '周四', time: '19:00-19:40', teacher: '胡源', content: '【规划篇】如何在高二取得领先', score: '家长必听', isHighlight: true },
+        { id: 2, day: '周四', time: '20:00-20:40', teacher: '胡源', content: '【数学规划】圆模型妙解定比三角形', score: '10~15分', isHighlight: false },
+        { id: 3, day: '周五', time: '18:00-18:40', teacher: '李楠', content: '【物理规划】科学思维妙解高中天体物理问题', score: '10~15分', isHighlight: false },
+        { id: 4, day: '周五', time: '19:00-19:40', teacher: '姜博杨', content: '【语文规划】妙笔生花—零基础升格一类文', score: '20~30分', isHighlight: false },
+        { id: 5, day: '周五', time: '20:00-20:40', teacher: '高东辉', content: '【化学规划】极简法掌握电化学解题思路', score: '10~15分', isHighlight: false },
+        { id: 6, day: '周六', time: '18:00-18:40', teacher: '李楠', content: '【物理规划】科学思维妙解电场粒子运动问题', score: '10~15分', isHighlight: false },
+        { id: 7, day: '周六', time: '19:00-19:40', teacher: '漆纯伊', content: '【英语规划】英语阅读大招突破秘籍', score: '30~40分', isHighlight: false },
+        { id: 8, day: '周六', time: '20:00-20:40', teacher: '胡源', content: '【数学规划】妙解圆锥曲线定点问题', score: '5~12分', isHighlight: false }
+      ];
+
+    // 赠课数据
+    const bonusCourses = {
+      '胡源': [
+        '数列必考基础与常规模型',
+        '立体几何必考基础与常规模型',
+        '函数必考基础与常规模型',
+        '导数必考基础与常规模型',
+        '圆锥曲线必考基础与常规模型',
+        '三角必考基础与常规模型',
+        '均值不等式基础',
+        '夹逼与缩域思想(I)'
+      ],
+      '白瑞芳': [
+        '立体几何：口算外接球模型上',
+        '圆锥曲线：配极模型速解定点定值',
+        '圆锥曲线：焦点分弦比秒杀模型',
+        '数列：错位相减公式法速算技巧',
+        '数列：不动点法及特征根法速求通项',
+        '导数：含参函数单调性无脑分类讨论法',
+        '导数：判断切线条数速解（拔高）',
+        '函数：一个视频搞定奇偶性'
+      ]
+    };
+    
+    // DOM 元素
+      const coursesContainer = document.getElementById('coursesContainer');
+      const previewTableBody = document.getElementById('previewTableBody');
+      const previewBackground = document.getElementById('previewBackground');
+      const channelRadios = document.querySelectorAll('input[name="channel"]');
+      const generateBtn = document.getElementById('generateBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const successToast = document.getElementById('successToast');
+      const teachersAvatarsContainer = document.getElementById('teachersAvatarsContainer');
+      const bonusTeacherSelect = document.getElementById('bonusTeacherSelect');
+      const cancelBonusBtn = document.getElementById('cancelBonusBtn');
+    
+    // 初始化课程编辑区
+    function initCoursesEditor() {
+      coursesContainer.innerHTML = '';
+      
+      defaultCourses.forEach(course => {
+        const courseItem = document.createElement('div');
+        courseItem.className = 'grid grid-cols-[1fr_1fr_2fr_1fr] gap-2 items-center p-2 border border-gray-200 rounded-lg';
+        courseItem.dataset.id = course.id;
+        
+        // 时间
+        const timeDiv = document.createElement('div');
+        timeDiv.className = 'flex flex-col';
+        const dayInput = document.createElement('input');
+        dayInput.type = 'text';
+        dayInput.value = course.day;
+        dayInput.className = 'px-2 py-1 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+        dayInput.dataset.type = 'day-input';
+        
+        const timeInput = document.createElement('input');
+        timeInput.type = 'text';
+        timeInput.value = course.time;
+        timeInput.className = 'mt-1 px-2 py-1 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+        timeInput.dataset.type = 'time-input';
+        
+        timeDiv.appendChild(dayInput);
+        timeDiv.appendChild(timeInput);
+        
+        // 主讲下拉框
+        const teacherSelect = document.createElement('select');
+        teacherSelect.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+        teacherSelect.dataset.type = 'teacher-select';
+        
+        teachers.forEach(teacher => {
+          const option = document.createElement('option');
+          option.value = teacher;
+          option.textContent = teacher;
+          if (teacher === course.teacher) {
+            option.selected = true;
+          }
+          teacherSelect.appendChild(option);
+        });
+        
+        // 添加加入小图按钮
+        const addAvatarBtn = document.createElement('button');
+        addAvatarBtn.textContent = '加入小图';
+        addAvatarBtn.className = 'mt-1 px-2 py-1 text-xs bg-secondary text-white rounded';
+        addAvatarBtn.onclick = function(e) {
+          e.stopPropagation();
+          const selectedTeacher = teacherSelect.value;
+          
+          // 检查是否有该老师的信息
+          if (teacherInfo[selectedTeacher]) {
+            const teacherIndex = teachersToDisplay.findIndex(t => t.name === selectedTeacher);
+            if (teacherIndex > -1) {
+              // 如果已存在，从列表中移除
+              teachersToDisplay.splice(teacherIndex, 1);
+              addAvatarBtn.textContent = '加入小图';
+            } else {
+              // 检查是否已达到最多三位主讲的限制
+              if (teachersToDisplay.length >= 3) {
+                alert('最多选择三位主讲');
+                return;
+              }
+              // 如果不存在且未达到限制，添加到列表
+              teachersToDisplay.push({
+                name: selectedTeacher,
+                info: teacherInfo[selectedTeacher]
+              });
+              addAvatarBtn.textContent = '取消小图';
+            }
+            
+            // 更新预览
+            updatePreview();
+          }
+        };
+        
+        // 检查老师是否已在显示列表中，设置按钮初始状态
+        if (teachersToDisplay.some(t => t.name === course.teacher && teacherInfo[t.name])) {
+          addAvatarBtn.textContent = '取消小图';
+        }
+        
+        // 主讲选择器容器
+        const teacherContainer = document.createElement('div');
+        teacherContainer.className = 'flex flex-col';
+        teacherContainer.appendChild(teacherSelect);
+        teacherContainer.appendChild(addAvatarBtn);
+        
+        // 课程内容
+        let contentElement;
+        const teacher = course.teacher;
+        // 保留完整的课程列表以支持下拉选择
+        let contents = courseContentMap[teacher] || [];
+        
+        if (isH3Channel && contents.length > 1) {
+          // 多课程内容，创建下拉框
+          contentElement = document.createElement('select');
+          contentElement.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+          contentElement.dataset.type = 'content-select';
+          
+          contents.forEach(content => {
+            const option = document.createElement('option');
+            option.value = content;
+            option.textContent = content;
+            
+            // 特殊处理莫荒年的课程默认选中
+            let shouldSelect = content === course.content;
+            if (teacher === '莫荒年') {
+              if (course.day === '周五' && content.includes('公式妙解碰撞')) {
+                shouldSelect = true;
+              } else if (course.day === '周六' && content.includes('磁偏角')) {
+                shouldSelect = true;
+              }
+            }
+            
+            if (shouldSelect) {
+              option.selected = true;
+            }
+            contentElement.appendChild(option);
+          });
+          
+          // 添加编辑按钮
+          const editButton = document.createElement('button');
+          editButton.textContent = '编辑';
+          editButton.className = 'ml-2 px-2 py-1 text-xs bg-primary text-white rounded';
+          // 直接使用addEventListener绑定点击事件
+          editButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // 创建输入框替换下拉框
+            const inputBox = document.createElement('input');
+            inputBox.type = 'text';
+            inputBox.value = contentElement.querySelector('select') ? contentElement.querySelector('select').value : contentElement.value;
+            inputBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+            inputBox.dataset.type = 'content-input';
+            inputBox.addEventListener('change', updatePreview);
+            inputBox.addEventListener('input', updatePreview);
+            
+            // 临时保存原始内容
+            courseItem.dataset.originalContent = inputBox.value;
+            
+            // 替换元素 - 修复替换逻辑
+            if (courseItem.contains(contentElement)) {
+              courseItem.replaceChild(inputBox, contentElement);
+              inputBox.focus();
+            }
+          });
+          
+          // 容器包裹
+          const contentContainer = document.createElement('div');
+          contentContainer.className = 'flex items-center';
+          contentContainer.appendChild(contentElement);
+          contentContainer.appendChild(editButton);
+          contentElement = contentContainer;
+        } else {
+          // 单课程内容或非胡源领衔，创建输入框
+          contentElement = document.createElement('input');
+          contentElement.type = 'text';
+          contentElement.value = course.content;
+          contentElement.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+          contentElement.dataset.type = 'content-input';
+        }
+        
+        // 分值占比
+        const scoreInput = document.createElement('input');
+        scoreInput.type = 'text';
+        scoreInput.value = course.score;
+        scoreInput.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+        scoreInput.dataset.type = 'score-input';
+        
+        // 添加到课程项
+        courseItem.appendChild(timeDiv);
+        courseItem.appendChild(teacherContainer);
+        courseItem.appendChild(contentElement);
+        courseItem.appendChild(scoreInput);
+        
+        // 添加到容器
+        coursesContainer.appendChild(courseItem);
+        
+        // 添加事件监听
+        dayInput.addEventListener('input', updatePreview);
+        timeInput.addEventListener('input', updatePreview);
+        
+        // 主讲变更时自动更新课程内容
+        teacherSelect.addEventListener('change', function() {
+          const selectedTeacher = this.value;
+          const dayInput = courseItem.querySelector('[data-type="day-input"]');
+          const dayValue = dayInput ? dayInput.value : '';
+          
+          // 保留完整的课程列表以支持下拉选择
+          let contents = courseContentMap[selectedTeacher] || [];
+          
+          // 获取当前的课程内容元素
+          let currentContentElement = null;
+          
+          // 先尝试直接获取第三个位置的元素
+          if (courseItem.children.length >= 3) {
+            currentContentElement = courseItem.children[2];
+          }
+          
+          // 所有渠道都支持下拉框功能，只要教师有多节课程
+          if (isH3Channel) {
+            if (contents.length > 1) {
+              // 多课程内容，创建下拉框
+              const selectBox = document.createElement('select');
+              selectBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+              
+              contents.forEach(content => {
+                const option = document.createElement('option');
+                option.value = content;
+                option.textContent = content;
+                selectBox.appendChild(option);
+              });
+              
+              // 添加编辑按钮
+              const editButton = document.createElement('button');
+              editButton.textContent = '编辑';
+              editButton.className = 'ml-2 px-2 py-1 text-xs bg-primary text-white rounded';
+              // 直接使用addEventListener绑定点击事件
+              editButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // 创建输入框替换下拉框
+                const inputBox = document.createElement('input');
+                inputBox.type = 'text';
+                inputBox.value = selectBox.value;
+                inputBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+                inputBox.addEventListener('change', updatePreview);
+                inputBox.addEventListener('input', updatePreview);
+                
+                // 替换元素 - 修复替换逻辑
+                const container = selectBox.parentNode;
+                if (container && courseItem.contains(container)) {
+                  courseItem.replaceChild(inputBox, container);
+                  inputBox.focus();
+                }
+              });
+              
+              // 容器包裹
+              const contentContainer = document.createElement('div');
+              contentContainer.className = 'flex items-center';
+              contentContainer.appendChild(selectBox);
+              contentContainer.appendChild(editButton);
+              
+              // 替换现有元素
+              if (currentContentElement) {
+                courseItem.replaceChild(contentContainer, currentContentElement);
+              }
+              
+              // 添加事件监听
+              selectBox.addEventListener('change', function() {
+                // 获取分值输入框
+                const scoreInput = courseItem.querySelector('[data-type="score-input"]');
+                // 先更新分值
+                updateScoreByContent(this.value, scoreInput);
+                // 然后更新预览
+                updatePreview();
+              });
+            } else {
+              // 单课程内容，设置输入框值
+              if (currentContentElement) {
+                if (currentContentElement.querySelector('select') || currentContentElement.tagName === 'SELECT') {
+                  // 如果当前是下拉框，替换为输入框
+                  const inputBox = document.createElement('input');
+                  inputBox.type = 'text';
+                  inputBox.value = contents[0] || '';
+                  inputBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+                  inputBox.addEventListener('change', updatePreview);
+                  inputBox.addEventListener('input', updatePreview);
+                  
+                  courseItem.replaceChild(inputBox, currentContentElement);
+                } else if (currentContentElement.querySelector('input') || currentContentElement.tagName === 'INPUT') {
+                  // 如果已经是输入框，直接设置值
+                  const inputEl = currentContentElement.tagName === 'INPUT' ? currentContentElement : currentContentElement.querySelector('input');
+                  if (inputEl) {
+                    inputEl.value = contents[0] || '';
+                  }
+                }
+              }
+            }
+          } else {
+            // 非H3渠道，设置默认内容
+            if (currentContentElement) {
+              if (currentContentElement.querySelector('select') || currentContentElement.tagName === 'SELECT') {
+                // 如果当前是下拉框，替换为输入框
+                const inputBox = document.createElement('input');
+                inputBox.type = 'text';
+                inputBox.value = contents[0] || '';
+                inputBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+                inputBox.addEventListener('change', updatePreview);
+                inputBox.addEventListener('input', updatePreview);
+                
+                courseItem.replaceChild(inputBox, currentContentElement);
+              } else if (currentContentElement.querySelector('input') || currentContentElement.tagName === 'INPUT') {
+                // 如果已经是输入框，直接设置值
+                const inputEl = currentContentElement.tagName === 'INPUT' ? currentContentElement : currentContentElement.querySelector('input');
+                if (inputEl) {
+                  inputEl.value = contents[0] || '';
+                }
+              }
+            }
+          }
+          
+          // 更新分值占比
+          const scoreInput = courseItem.querySelector('[data-type="score-input"]');
+          if (scoreInput && contents.length > 0) {
+            updateScoreByContent(contents[0], scoreInput);
+          }
+          
+          // 立即更新预览
+          updatePreview();
+        });
+        
+        // 为内容元素添加事件监听
+        if (contentElement.tagName === 'INPUT') {
+          contentElement.addEventListener('input', function() {
+            updateScoreByContent(this.value, scoreInput);
+            updatePreview();
+          });
+          contentElement.addEventListener('change', function() {
+            updateScoreByContent(this.value, scoreInput);
+            updatePreview();
+          });
+        } else if (contentElement.querySelector('select')) {
+          contentElement.querySelector('select').addEventListener('change', function() {
+            updateScoreByContent(this.value, scoreInput);
+            updatePreview();
+          });
+        }
+        
+        scoreInput.addEventListener('input', updatePreview);
+        scoreInput.addEventListener('change', updatePreview);
+      });
+    }
+    
+    // 存储当前选中的渠道
+    let currentChannel = 'h3';
+    
+    // 更新预览
+    function updatePreview() {
+      // 清空表格内容
+      previewTableBody.innerHTML = '';
+      
+      // 清空老师头像容器
+      teachersAvatarsContainer.innerHTML = '';
+      
+      // 根据渠道动态设置课程表格位置
+      if (currentChannel === 'j3') { // 教辅类渠道
+        tableContainer.style.top = 'auto';
+        tableContainer.style.bottom = '3%'; // 向下调整一丢丢
+        tableContainer.style.top = 'unset';
+      } else { // 其他渠道向上调整一丢丢并向右移动一丢丢
+        tableContainer.style.top = '31.5%';
+        tableContainer.style.bottom = '50px';
+        tableContainer.style.marginLeft = '3.7%'; // 向左移动一丢丢
+      }
+      
+      // 显示选中的老师头像
+      teachersToDisplay.forEach((teacherItem, index) => {
+        // 确保老师信息存在且格式正确
+        let teacherData;
+        let teacherName;
+        
+        if (typeof teacherItem === 'object' && teacherItem.info) {
+          // 直接使用对象格式的老师信息
+          teacherData = teacherItem.info;
+          teacherName = teacherItem.name;
+        } else if (typeof teacherItem === 'string' && teacherInfo[teacherItem]) {
+          // 如果是字符串，从teacherInfo获取信息
+          teacherData = teacherInfo[teacherItem];
+          teacherName = teacherItem;
+        } else {
+          return; // 跳过没有有效信息的老师
+        }
+        
+        // 创建头像卡片
+        const avatarCard = document.createElement('div');
+        avatarCard.className = 'flex items-center';
+        
+        // 根据索引设置不同的位置调整
+        // 根据数组长度和索引调整老师头像的位置
+        if (teachersToDisplay.length === 3) {
+        if (index === 0) {
+        // 第一个老师整体向左移动一丢丢
+        avatarCard.classList.add('transform', 'translate-x-36'); // 整体向左移动一丢丢
+        } else if (index === 1) {
+        // 第二个老师整体向左移动一丢丢
+        avatarCard.classList.add('ml-28', 'transform', 'translate-x-36'); // 保持间距不变，整体向左移动一丢丢
+        } else if (index === 2) {
+        // 第三个老师整体向左移动一丢丢
+        avatarCard.classList.add('ml-56', 'transform', 'translate-x-36'); // 保持间距不变，整体向左移动一丢丢
+        }
+        }
+        
+        // 创建头像图片
+        const avatarImg = document.createElement('img');
+        avatarImg.src = teacherData.img;
+        avatarImg.className = 'w-24 h-24 rounded-full object-cover border-2 border-white shadow-md';
+        avatarImg.alt = teacherName;
+        
+        // 创建介绍文本容器
+        const infoContainer = document.createElement('div');
+        infoContainer.className = 'ml-2 text-left';
+        
+        // 创建标题
+        const titleDiv = document.createElement('div');
+        titleDiv.textContent = teacherData.title || teacherName;
+        titleDiv.className = 'text-sm font-medium text-orange-500 drop-shadow-md';
+        
+        // 创建描述
+        const descDiv = document.createElement('div');
+        descDiv.textContent = teacherData.desc || '';
+        descDiv.className = 'text-xs text-black drop-shadow-md whitespace-pre-line';
+        
+        // 组合元素
+        infoContainer.appendChild(titleDiv);
+        infoContainer.appendChild(descDiv);
+        avatarCard.appendChild(avatarImg);
+        avatarCard.appendChild(infoContainer);
+        
+        // 添加到容器
+        teachersAvatarsContainer.appendChild(avatarCard);
+      });
+      
+      // 生成课程表格内容
+      const courseItems = coursesContainer.querySelectorAll('[data-id]');
+      
+      courseItems.forEach((item, index) => {
+        // 获取时间部分
+        const timeDiv = item.querySelector('div:first-child');
+        const day = timeDiv ? timeDiv.querySelector('input:first-child').value : '';
+        const time = timeDiv ? timeDiv.querySelector('input:last-child').value : '';
+        
+        // 获取主讲部分
+        const teacherSelect = item.querySelector('select');
+        const teacher = teacherSelect ? teacherSelect.value : '';
+        
+        // 获取课程内容部分
+        let content = '';
+        const thirdElement = item.children[2];
+        if (thirdElement) {
+          if (thirdElement.tagName === 'INPUT') {
+            content = thirdElement.value;
+          } else if (thirdElement.tagName === 'SELECT') {
+            content = thirdElement.value;
+          } else {
+            const innerInput = thirdElement.querySelector('input');
+            const innerSelect = thirdElement.querySelector('select');
+            if (innerInput) content = innerInput.value;
+            else if (innerSelect) content = innerSelect.value;
+          }
+        }
+        
+        // 获取分值部分
+        const scoreInputs = item.querySelectorAll('input');
+        const score = scoreInputs.length > 2 ? scoreInputs[scoreInputs.length - 1].value : '';
+        
+        // 创建行
+        const row = document.createElement('tr');
+        row.className = index % 2 === 0 ? 'bg-white' : 'bg-blue-50/50';
+        
+        // 创建时间单元格（星期和时间在一行显示，星期居左，时间居右）
+        const timeCell = document.createElement('td');
+        timeCell.innerHTML = `<div style="display: flex; align-items: center; justify-content: space-between;">
+          <span>${day}</span>
+          <span>${time}</span>
+        </div>`;
+        timeCell.className = "px-[0.3rem] py-3 border-2 border-blue-100 text-base font-medium text-gray-800";
+        row.appendChild(timeCell);
+        
+        // 创建主讲单元格
+        const teacherCell = document.createElement('td');
+        teacherCell.textContent = teacher;
+        teacherCell.className = "px-[0.3rem] py-3 border-2 border-blue-100 text-base font-medium text-center text-gray-800";
+        row.appendChild(teacherCell);
+        
+        // 创建课程内容单元格
+        const contentCell = document.createElement('td');
+        contentCell.textContent = content;
+        contentCell.className = "px-[0.3rem] py-3 border-2 border-blue-100 text-base text-left text-gray-800";
+        row.appendChild(contentCell);
+        
+        // 创建分值占比单元格
+        const scoreCell = document.createElement('td');
+        scoreCell.textContent = score;
+        scoreCell.className = "px-[0.3rem] py-3 border-2 border-blue-100 text-base font-medium text-center text-indigo-600";
+        row.appendChild(scoreCell);
+        
+        // 为胡源或白瑞芳的行添加粗体和红色字体样式
+        if (teacher === '胡源' || teacher === '白瑞芳') {
+          // 获取所有单元格
+          const cells = row.querySelectorAll('td');
+          // 为每个单元格添加样式
+          cells.forEach(cell => {
+            cell.style.fontWeight = 'bold';
+            cell.style.color = 'red';
+          });
+        }
+        
+        // 添加行到表格
+        previewTableBody.appendChild(row);
+      });
+      
+      // 添加赠课表格
+      addBonusCoursesTable();
+    }
+    
+    // 添加赠课表格函数
+      function addBonusCoursesTable() {
+        // 检查是否有选中的赠课教师
+        const selectedTeacher = bonusTeacherSelect.value;
+        if (!selectedTeacher || !bonusCourses[selectedTeacher]) {
+          // 如果没有选中，移除已存在的赠课表格
+          const existingBonusTable = document.getElementById('bonusCoursesTableContainer');
+          if (existingBonusTable) {
+            existingBonusTable.remove();
+          }
+          return;
+        }
+        
+        // 获取赠课列表
+        const bonusCoursesList = bonusCourses[selectedTeacher];
+        
+        // 移除已存在的赠课表格
+        const existingBonusTable = document.getElementById('bonusCoursesTableContainer');
+        if (existingBonusTable) {
+          existingBonusTable.remove();
+        }
+        
+        // 创建赠课表格容器 - 调整宽度，左面边距保持不变，右面往左移动
+        const bonusTableContainer = document.createElement('div');
+        bonusTableContainer.id = 'bonusCoursesTableContainer';
+        bonusTableContainer.className = 'absolute bottom-2 ml-12 w-[75%] px-2'; // 宽度从90%减少到75%，底部位置向下移动
+        
+        // 添加标题文本
+        const titleElement = document.createElement('div');
+        titleElement.textContent = '随讲座附赠课程8节：';
+        titleElement.className = 'text-sm font-bold mb-2 text-gray-800';
+        
+        // 创建表格 - 使用纯线条，移除白色背景
+        const table = document.createElement('table');
+        table.className = 'w-full border-collapse text-center';
+        
+        // 设置列宽
+        for (let i = 0; i < 4; i++) {
+          const col = document.createElement('col');
+          col.style.width = '25%';
+          table.appendChild(col);
+        }
+        
+        // 创建表格主体
+        const tbody = document.createElement('tbody');
+        
+        // 创建两行，每行4列 - 使用纯线条样式，字体缩小以适应
+        for (let i = 0; i < 2; i++) {
+          const row = document.createElement('tr');
+          
+          for (let j = 0; j < 4; j++) {
+            const cellIndex = i * 4 + j;
+            if (cellIndex < bonusCoursesList.length) {
+              const cell = document.createElement('td');
+              cell.textContent = bonusCoursesList[cellIndex];
+              // 纯线条样式，无背景，字体缩小
+              cell.className = 'px-2 py-2 border border-black text-[10px] font-medium';
+              row.appendChild(cell);
+            }
+          }
+          
+          tbody.appendChild(row);
+        }
+        
+        table.appendChild(tbody);
+        bonusTableContainer.appendChild(titleElement);
+        bonusTableContainer.appendChild(table);
+        
+        // 添加到预览容器
+        const previewContainer = document.getElementById('previewContainer');
+        previewContainer.appendChild(bonusTableContainer);
+      }
+      
+      // 取消赠课函数
+      function cancelBonusCourses() {
+        // 重置选择框
+        bonusTeacherSelect.value = '';
+        // 更新预览以移除赠课表格
+        updatePreview();
+        // 显示提示
+        showSuccessToast('赠课已取消');
+      }
+    
+    // 显示成功提示
+    function showSuccessToast(message) {
+      successToast.querySelector('span').textContent = message;
+      successToast.classList.remove('translate-x-full', 'opacity-0');
+      
+      setTimeout(() => {
+        successToast.classList.add('translate-x-full', 'opacity-0');
+      }, 3000);
+    }
+    
+    // 生成课表
+    function generateTimetable() {
+      // 先更新预览确保数据最新
+      updatePreview();
+      
+      // 显示成功提示
+      showSuccessToast('课表生成成功！');
+    }
+    
+    // 成功提示函数
+    function showSuccessToast(message) {
+      // 创建toast元素
+      const toast = document.createElement('div');
+      toast.textContent = message || '操作成功！';
+      toast.style.position = 'fixed';
+      toast.style.bottom = '20px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.backgroundColor = 'rgba(0, 128, 0, 0.8)';
+      toast.style.color = 'white';
+      toast.style.padding = '10px 20px';
+      toast.style.borderRadius = '4px';
+      toast.style.zIndex = '9999';
+      toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+      toast.style.fontSize = '14px';
+      
+      // 添加到页面
+      document.body.appendChild(toast);
+      
+      // 2秒后自动移除
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s';
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 500);
+      }, 2000);
+    }
+    
+    // 下载图片 - 优化版本，兼容Netlify部署
+    function downloadImage() {
+      try {
+        // 确保预览已更新
+        updatePreview();
+        
+        // 显示提示
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+        notification.textContent = '请稍候，正在准备下载...';
+        document.body.appendChild(notification);
+        
+        const previewContainer = document.getElementById('previewContainer');
+        if (!previewContainer) {
+          console.error('找不到预览容器元素');
+          notification.textContent = '下载失败：找不到预览元素';
+          notification.className = 'fixed top-4 right-4 bg-danger text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+          setTimeout(() => notification.remove(), 3000);
+          return;
+        }
+        
+        // 等待所有图片加载完成后再绘制
+        const images = previewContainer.querySelectorAll('img');
+        const imageLoadPromises = Array.from(images).map(img => {
+          return new Promise((resolve, reject) => {
+            // 处理跨域图片问题
+            if (!img.crossOrigin) {
+              img.crossOrigin = 'anonymous';
+            }
+            
+            if (img.complete && img.naturalHeight > 0) {
+              // 图片已经加载完成
+              resolve(img);
+            } else {
+              // 图片尚未加载完成，设置加载事件
+              img.onload = () => resolve(img);
+              img.onerror = function(err) {
+                console.warn('图片加载失败，将继续处理:', img.src, err);
+                resolve(img); // 即使图片加载失败也继续处理
+              };
+            }
+          });
+        });
+        
+        // 等待所有图片加载完成或超时
+        Promise.race([
+          Promise.all(imageLoadPromises),
+          new Promise(resolve => setTimeout(resolve, 5000)) // 5秒超时
+        ]).then(() => {
+          console.log('开始生成截图');
+          
+          // 使用优化配置，确保在Netlify环境中正常工作
+          const html2canvasOptions = {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            letterRendering: 1,
+            removeContainer: false
+          };
+          
+          // 图片加载完成后绘制
+          html2canvas(previewContainer, html2canvasOptions).then(canvas => {
+            // 核心功能：优化的下载方案，兼容不同浏览器
+            function triggerDownload() {
+              try {
+                // 优先使用Blob API，更好的性能和兼容性
+                canvas.toBlob((blob) => {
+                  if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const downloadLink = document.createElement('a');
+                    
+                    // 设置文件名
+                    const timestamp = new Date().toLocaleString('zh-CN').replace(/[\\/:*?"<>|]/g, '-');
+                    downloadLink.download = `课表_${timestamp}.png`;
+                    
+                    downloadLink.href = url;
+                    downloadLink.style.position = 'absolute';
+                    downloadLink.style.left = '-9999px';
+                    
+                    document.body.appendChild(downloadLink);
+                    
+                    // 使用鼠标事件模拟真实点击，提高兼容性
+                    const event = new MouseEvent('click', {
+                      bubbles: true,
+                      cancelable: true,
+                      view: window
+                    });
+                    downloadLink.dispatchEvent(event);
+                    
+                    // 清理
+                    setTimeout(() => {
+                      if (document.body.contains(downloadLink)) {
+                        document.body.removeChild(downloadLink);
+                      }
+                      URL.revokeObjectURL(url);
+                    }, 100);
+                    
+                    // 更新通知
+                    notification.textContent = '下载成功！';
+                    setTimeout(() => notification.remove(), 2000);
+                  } else {
+                    // 降级到toDataURL方案
+                    fallbackToDataURL();
+                  }
+                }, 'image/png');
+              } catch (e) {
+                console.error('Blob下载失败，尝试降级方案:', e);
+                fallbackToDataURL();
+              }
+            }
+            
+            // 降级方案：使用toDataURL
+            function fallbackToDataURL() {
+              try {
+                const imgData = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                const timestamp = new Date().toLocaleString('zh-CN').replace(/[\\/:*?"<>|]/g, '-');
+                downloadLink.download = `课表_${timestamp}.png`;
+                downloadLink.href = imgData;
+                downloadLink.style.position = 'absolute';
+                downloadLink.style.left = '-9999px';
+                
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                
+                setTimeout(() => {
+                  if (document.body.contains(downloadLink)) {
+                    document.body.removeChild(downloadLink);
+                  }
+                }, 100);
+                
+                notification.textContent = '下载成功！';
+                setTimeout(() => notification.remove(), 2000);
+              } catch (e) {
+                console.error('自动下载失败:', e);
+                showAlternativeDownload(canvas);
+              }
+            }
+            
+            // 显示备选下载方式
+            function showAlternativeDownload(canvas) {
+              // 创建临时容器显示图片
+              const popup = document.createElement('div');
+              popup.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                z-index: 9999;
+                max-width: 90%;
+                max-height: 90%;
+                overflow: auto;
+                text-align: center;
+              `;
+              
+              const img = document.createElement('img');
+              img.src = canvas.toDataURL('image/png');
+              img.style.maxWidth = '100%';
+              img.style.maxHeight = '70vh';
+              img.style.border = '1px solid #ddd';
+              
+              const instruction = document.createElement('p');
+              instruction.textContent = '自动下载失败，请右键点击图片并选择\'图片另存为\'保存图片';
+              instruction.style.color = '#666';
+              instruction.style.marginTop = '15px';
+              
+              const closeBtn = document.createElement('button');
+              closeBtn.textContent = '关闭';
+              closeBtn.style.cssText = `
+                margin-top: 15px;
+                padding: 8px 20px;
+                background: #333;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+              `;
+              
+              // 添加半透明遮罩
+              const overlay = document.createElement('div');
+              overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 9998;
+              `;
+              
+              closeBtn.onclick = () => {
+                document.body.removeChild(popup);
+                document.body.removeChild(overlay);
+              };
+              
+              popup.appendChild(img);
+              popup.appendChild(instruction);
+              popup.appendChild(closeBtn);
+              
+              document.body.appendChild(overlay);
+              document.body.appendChild(popup);
+            }
+          }).catch(error => {
+            console.error('截图生成失败:', error);
+            alert('截图生成失败，请重试');
+          });
+        }).catch(error => {
+          console.error('图片加载失败:', error);
+          alert('部分图片加载失败，请刷新页面重试');
+        });
+      } catch (error) {
+        console.error('下载过程出错:', error);
+        alert('操作失败，请重试');
+      }
+    }
+    
+    // 初始化事件监听
+    function initEventListeners() {
+      // 渠道选择变更
+      channelRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          // 重置所有标签样式
+          document.querySelectorAll('input[name="channel"]').forEach(r => {
+            const label = r.closest('label');
+            label.classList.remove('border-primary', 'bg-primary/10');
+            label.classList.add('border-gray-200');
+            label.querySelector('span').classList.remove('text-primary');
+            label.querySelector('span').classList.add('text-gray-700');
+            label.querySelector('div>div').classList.remove('bg-primary/20');
+            label.querySelector('div>div').classList.add('bg-gray-200');
+            label.querySelector('i').classList.remove('text-primary');
+            label.querySelector('i').classList.add('text-gray-400');
+          });
+          
+          // 设置选中标签样式
+          const label = e.target.closest('label');
+          label.classList.remove('border-gray-200');
+          label.classList.add('border-primary', 'bg-primary/10');
+          label.querySelector('span').classList.remove('text-gray-700');
+          label.querySelector('span').classList.add('text-primary');
+          label.querySelector('div>div').classList.remove('bg-gray-200');
+          label.querySelector('div>div').classList.add('bg-primary/20');
+          label.querySelector('i').classList.remove('text-gray-400');
+          label.querySelector('i').classList.add('text-primary');
+          
+          // 更新背景图片
+              const channel = e.target.value;
+              currentChannel = channel; // 更新当前渠道变量
+              // 根据渠道设置对应的背景图片
+              if (channel === 'h3') {
+                previewBackground.src = './h2.png';
+              } else if (channel === 'b3') {
+                previewBackground.src = './b2.png';
+              } else if (channel === 'j3') {
+                previewBackground.src = './j2.png';
+              } else {
+                previewBackground.src = `./${channel}.png`;
+              }
+          
+          // 重新初始化课程编辑区以应用新的渠道设置
+          const courseItems = document.querySelectorAll('[data-id]');
+          
+          courseItems.forEach(item => {
+            const teacherSelect = item.querySelector('[data-type="teacher-select"]');
+            const courseId = parseInt(item.dataset.id);
+            
+            if (teacherSelect) {
+              if (channel === '白瑞芳领衔') {
+                // 白瑞芳领衔时，只将第一、二、八栏的主讲设置为白瑞芳
+                if ([1, 2, 8].includes(courseId)) {
+                  teacherSelect.value = '白瑞芳';
+                  // 触发change事件，让系统自动处理课程内容
+                  teacherSelect.dispatchEvent(new Event('change'));
+                }
+              } else if (channel === 'j3') { // 教辅类渠道
+                // 恢复默认教师设置
+                const defaultCourse = defaultCourses.find(c => c.id === courseId);
+                if (defaultCourse) {
+                  teacherSelect.value = defaultCourse.teacher;
+                  teacherSelect.dispatchEvent(new Event('change'));
+                }
+                
+                // 教辅类渠道需要清空小图老师和取消赠课
+                if (courseId === 1) { // 只在处理第一个课程时执行一次
+                  // 清空小图老师列表
+                  teachersToDisplay = [];
+                  // 取消赠课
+                  cancelBonusCourses();
+                }
+                
+                // 如果是第一栏（courseId = 1），设置特殊课程内容
+                if (courseId === 1) {
+                  setTimeout(() => {
+                    const contentElement = item.children[2];
+                    if (contentElement) {
+                      if (contentElement.tagName === 'INPUT') {
+                        contentElement.value = '【导学课】如何利用教辅书，助力高二取得领先';
+                      } else if (contentElement.tagName === 'SELECT') {
+                        // 创建一个输入框替换下拉框
+                        const inputBox = document.createElement('input');
+                        inputBox.type = 'text';
+                        inputBox.value = '【导学课】如何利用教辅书，助力高二取得领先';
+                        inputBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+                        inputBox.dataset.type = 'content-input';
+                        inputBox.addEventListener('change', updatePreview);
+                        inputBox.addEventListener('input', updatePreview);
+                        item.replaceChild(inputBox, contentElement);
+                      } else {
+                        // 处理容器内的元素
+                        const innerInput = contentElement.querySelector('input');
+                        const innerSelect = contentElement.querySelector('select');
+                        if (innerInput) {
+                          innerInput.value = '【导学课】如何利用教辅书，助力高二取得领先';
+                        } else if (innerSelect) {
+                          // 创建一个输入框替换容器
+                          const inputBox = document.createElement('input');
+                          inputBox.type = 'text';
+                          inputBox.value = '【导学课】如何利用教辅书，助力高二取得领先';
+                          inputBox.className = 'px-2 py-2 text-sm border border-gray-300 rounded border-hover focus:outline-none focus:border-primary';
+                          inputBox.dataset.type = 'content-input';
+                          inputBox.addEventListener('change', updatePreview);
+                          inputBox.addEventListener('input', updatePreview);
+                          item.replaceChild(inputBox, contentElement);
+                        }
+                      }
+                      // 更新预览
+                      updatePreview();
+                    }
+                  }, 100); // 延迟执行，确保教师选择的change事件已完成处理
+                }
+              } else {
+                // 其他频道时，恢复默认教师设置
+                const defaultCourse = defaultCourses.find(c => c.id === courseId);
+                if (defaultCourse) {
+                  teacherSelect.value = defaultCourse.teacher;
+                  teacherSelect.dispatchEvent(new Event('change'));
+                }
+              }
+            }
+          });
+          
+          // 设置isH3Channel变量 - 现在所有渠道都支持下拉框功能
+          isH3Channel = true;
+          
+          // 确保在白瑞芳领衔模式下，白瑞芳的课程内容可以使用下拉框选择
+          // 这里无需额外修改，因为课程内容绑定已经在courseContentMap中设置好，
+          // 当切换教师为白瑞芳时，系统会自动根据courseContentMap创建下拉框
+          
+          initCoursesEditor();
+          updatePreview();
+        });
+      });
+      
+      // 生成按钮
+      generateBtn.addEventListener('click', generateTimetable);
+      
+      // 下载按钮功能已移除
+      
+      // 赠课选择下拉框事件
+      bonusTeacherSelect.addEventListener('change', updatePreview);
+      
+      // 取消赠课按钮事件
+      cancelBonusBtn.addEventListener('click', cancelBonusCourses);
+      
+      // 分天课表按钮事件
+      document.getElementById('dailyScheduleBtn').addEventListener('click', function() {
+        // 收集当前课程数据
+        const courseItems = coursesContainer.querySelectorAll('[data-id]');
+        const currentCourses = Array.from(courseItems).map(item => {
+          // 获取时间部分
+          const timeDiv = item.querySelector('div:first-child');
+          const day = timeDiv ? timeDiv.querySelector('input:first-child').value : '';
+          const time = timeDiv ? timeDiv.querySelector('input:last-child').value : '';
+          
+          // 获取主讲部分
+          const teacherSelect = item.querySelector('select');
+          const teacher = teacherSelect ? teacherSelect.value : '';
+          
+          // 获取课程内容部分
+          let content = '';
+          const thirdElement = item.children[2];
+          if (thirdElement) {
+            if (thirdElement.tagName === 'INPUT') {
+              content = thirdElement.value;
+            } else if (thirdElement.tagName === 'SELECT') {
+              content = thirdElement.value;
+            } else {
+              const innerInput = thirdElement.querySelector('input');
+              const innerSelect = thirdElement.querySelector('select');
+              if (innerInput) content = innerInput.value;
+              else if (innerSelect) content = innerSelect.value;
+            }
+          }
+          
+          // 获取分值部分
+          const scoreInputs = item.querySelectorAll('input');
+          const score = scoreInputs.length > 2 ? scoreInputs[scoreInputs.length - 1].value : '';
+          
+          return { id: item.dataset.id, day, time, teacher, content, score };
+        });
+        
+        // 保存到localStorage以便在新页面使用
+        localStorage.setItem('dailyCourses', JSON.stringify(currentCourses));
+        localStorage.setItem('currentChannel', currentChannel);
+        localStorage.setItem('teacherInfo', JSON.stringify(teacherInfo));
+        
+        // 打开新窗口
+        window.open('daily_schedule.html', '_blank');
+      });
+    }
+    
+    // 根据课程内容更新分值占比
+    function updateScoreByContent(content, scoreInput) {
+      if (!content || !scoreInput) return;
+      
+      // 去除首尾空白字符进行匹配
+      const trimmedContent = content.trim();
+      
+      // 重点：先处理数学课程的关键词匹配，确保优先级
+      // 匹配圆模型相关课程
+      if (trimmedContent.includes('圆模型妙解定比三角形')) {
+        scoreInput.value = '10~15分';
+        return;
+      }
+      // 匹配圆锥曲线相关课程
+      if (trimmedContent.includes('妙解圆锥曲线定点问题')) {
+        scoreInput.value = '5~12分';
+        return;
+      }
+      
+      // 尝试直接匹配
+      if (contentScoreMap[trimmedContent]) {
+        scoreInput.value = contentScoreMap[trimmedContent];
+        return;
+      }
+      
+      // 尝试移除额外空格后匹配
+      const normalizedContent = trimmedContent.replace(/\s+/g, ' ');
+      if (contentScoreMap[normalizedContent]) {
+        scoreInput.value = contentScoreMap[normalizedContent];
+        return;
+      }
+      
+      // 尝试完全去除空格后匹配
+      const noSpaceContent = trimmedContent.replace(/\s+/g, '');
+      for (const key in contentScoreMap) {
+        const noSpaceKey = key.replace(/\s+/g, '');
+        if (noSpaceContent.includes(noSpaceKey) || noSpaceKey.includes(noSpaceContent)) {
+          scoreInput.value = contentScoreMap[key];
+          return;
+        }
+      }
+      
+      // 尝试模糊匹配（如果精确匹配失败）
+      // 优先匹配较长的关键词，提高匹配准确性
+      const keys = Object.keys(contentScoreMap).sort((a, b) => b.length - a.length);
+      for (const key of keys) {
+        const trimmedKey = key.trim();
+        if (trimmedContent.includes(trimmedKey) || trimmedKey.includes(trimmedContent) || 
+            normalizedContent.includes(trimmedKey) || trimmedKey.includes(normalizedContent)) {
+          scoreInput.value = contentScoreMap[key];
+          return;
+        }
+      }
+      
+      // 根据关键词匹配（增加匹配成功率）
+      if (trimmedContent.includes('规划篇') || trimmedContent.includes('导学课')) {
+        scoreInput.value = '家长必听';
+        return;
+      }
+      if (trimmedContent.includes('英语阅读')) {
+        scoreInput.value = '30~40分';
+        return;
+      }
+      if (trimmedContent.includes('电化学')) {
+        scoreInput.value = '10~15分';
+        return;
+      }
+      if (trimmedContent.includes('天体物理') || trimmedContent.includes('电场粒子')) {
+        scoreInput.value = '10~15分';
+        return;
+      }
+      if (trimmedContent.includes('妙笔生花')) {
+        scoreInput.value = '20~30分';
+        return;
+      }
+    }
+    
+    // 初始化
+    function init() {
+      initCoursesEditor();
+      updatePreview();
+      initEventListeners();
+      
+      // 添加下载按钮事件监听
+      const downloadBtn = document.getElementById('downloadPreviewBtn');
+      if (downloadBtn) {
+        downloadBtn.addEventListener('click', downloadImage);
+      }
+    }
+    
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
