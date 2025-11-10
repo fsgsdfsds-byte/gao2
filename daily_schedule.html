@@ -40,11 +40,15 @@
         /* 保留基本样式，移除过渡和悬停效果 */
         width: 100%;
       }
-      /* 课程内容区域样式，确保内容不换行 */
+      /* 课程内容区域样式，确保内容不换行且完全显示 */
       .course-content {
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        width: 100%;
+      }
+      /* 调整教师卡片的宽度，确保足够宽以显示完整课程内容 */
+      .teacher-card {
+        width: 100%;
+        min-width: 0;
       }
       .schedule-card {
         background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
