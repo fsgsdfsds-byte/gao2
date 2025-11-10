@@ -1454,9 +1454,11 @@
       initEventListeners();
       
       // 添加下载按钮事件监听
-      const downloadBtn = document.getElementById('downloadPreviewBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
       if (downloadBtn) {
         downloadBtn.addEventListener('click', downloadImage);
+      } else {
+        console.warn('找不到下载按钮元素，请检查ID是否正确');
       }
     }
     

@@ -38,6 +38,13 @@
       /* 移除了教师卡片的悬停效果 */
       .teacher-card {
         /* 保留基本样式，移除过渡和悬停效果 */
+        width: 100%;
+      }
+      /* 课程内容区域样式，确保内容不换行 */
+      .course-content {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .schedule-card {
         background: linear-gradient(135deg, #fff 0%, #f9f9f9 100%);
@@ -242,7 +249,7 @@
           '<span>上课时间 | ' + course.time + '</span>' +
           '</div>' +
           '<div class="font-bold text-primary text-xl mb-2">【' + subject + '】</div>' +
-          '<div class="text-xl font-bold text-gray-900 mb-3">' + courseContent + '</div>' +
+          '<div class="text-xl font-bold text-gray-900 mb-3 course-content">' + courseContent + '</div>' +
           '<div class="flex items-center text-gray-600">' +
           '<i class="fa fa-line-chart mr-1"></i>' +
           '<span>高考分值 | ' + course.score + '</span>' +
