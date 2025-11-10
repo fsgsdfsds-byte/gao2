@@ -1,13 +1,15 @@
+# Netlify 基本配置
 [build]
-  publish = "."
-  command = ""
+  publish = "."  # 发布目录设为根目录
+  command = ""   # 无需构建命令
 
+# 重定向规则 - 确保所有URL都能正确访问
 [[redirects]]
   from = "/*"
   to = "/:splat"
   status = 200
 
-# 允许所有来源访问（用于跨域资源共享）
+# 全局CORS设置 - 允许所有来源访问资源
 [[headers]]
   for = "/*"
   [headers.values]
@@ -15,7 +17,7 @@
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
 
-# 图片资源的缓存设置
+# 图片资源缓存策略
 [[headers]]
   for = "/*.png"
   [headers.values]
@@ -26,7 +28,7 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# HTML文件不缓存，确保用户总是获取最新版本
+# HTML文件缓存策略 - 确保用户总是获取最新版本
 [[headers]]
   for = "/*.html"
   [headers.values]
