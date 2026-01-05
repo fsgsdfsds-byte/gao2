@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终测试页面</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .info {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mt-5">高二分天课表最终测试</h1>
+        
+        <!-- 功能描述 -->
+        <div class="test-section">
+            <h2>已实现功能</h2>
+            <ul>
+                <li><span class="success">✓</span> 两张分天课表的标题可编辑</li>
+                <li><span class="success">✓</span> 每张课表添加了下载按钮</li>
+                <li><span class="success">✓</span> 修复了JavaScript语法错误</li>
+            </ul>
+        </div>
+
+        <!-- 测试步骤 -->
+        <div class="test-section">
+            <h2>测试步骤</h2>
+            <ol>
+                <li>点击下方链接打开分天课表页面</li>
+                <li>编辑周五和周六课表的标题</li>
+                <li>点击下载按钮测试下载功能</li>
+                <li>刷新页面验证标题是否保存</li>
+            </ol>
+        </div>
+
+        <!-- 测试链接 -->
+        <div class="test-section">
+            <h2>测试链接</h2>
+            <a href="daily_schedule.html" class="btn btn-primary" target="_blank">打开分天课表页面</a>
+        </div>
+
+        <!-- 本地存储测试 -->
+        <div class="test-section">
+            <h2>本地存储测试</h2>
+            <button class="btn btn-info" onclick="testLocalStorage()">测试本地存储</button>
+            <div id="localStorageResult" class="mt-2"></div>
+        </div>
+    </div>
+
+    <script>
+        // 测试本地存储功能
+        function testLocalStorage() {
+            try {
+                // 测试保存数据
+                localStorage.setItem('testKey', 'testValue');
+                
+                // 测试读取数据
+                var value = localStorage.getItem('testKey');
+                
+                if (value === 'testValue') {
+                    document.getElementById('localStorageResult').innerHTML = 
+                        '<span class="success">本地存储功能正常</span>';
+                } else {
+                    document.getElementById('localStorageResult').innerHTML = 
+                        '<span class="error">本地存储读取失败</span>';
+                }
+            } catch (error) {
+                document.getElementById('localStorageResult').innerHTML = 
+                    '<span class="error">本地存储错误: ' + error.message + '</span>';
+            }
+        }
+    </script>
+</body>
+</html>

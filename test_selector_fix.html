@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择器修复测试</title>
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <style>
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body class="p-8">
+    <h1 class="text-3xl font-bold mb-6">CSS选择器修复测试</h1>
+    
+    <div id="testArea">
+        <p class="text-sm text-white/80 bg-blue-500 p-4">这是一个测试提示文字</p>
+    </div>
+    
+    <div class="mt-6">
+        <h2 class="text-xl font-semibold mb-4">测试结果</h2>
+        
+        <button id="testSelectorBtn" class="bg-green-500 text-white px-4 py-2 rounded mb-4">测试选择器</button>
+        
+        <div id="resultArea"></div>
+    </div>
+
+    <script>
+        document.getElementById('testSelectorBtn').addEventListener('click', function() {
+            const resultArea = document.getElementById('resultArea');
+            resultArea.innerHTML = '';
+            
+            try {
+                // 测试修复前的选择器（应该失败）
+                const badSelector = '.text-sm.text-white/80';
+                const elements = document.querySelectorAll(badSelector);
+                resultArea.innerHTML += '<div class="test-result info">使用未修复的选择器找到 ' + elements.length + ' 个元素</div>';
+            } catch (e) {
+                resultArea.innerHTML += '<div class="test-result error">未修复的选择器失败: ' + e.message + '</div>';
+            }
+            
+            try {
+                // 测试修复后的选择器（应该成功）
+                const goodSelector = '.text-sm.text-white\\/80';
+                const elements = document.querySelectorAll(goodSelector);
+                resultArea.innerHTML += '<div class="test-result success">使用修复后的选择器找到 ' + elements.length + ' 个元素</div>';
+            } catch (e) {
+                resultArea.innerHTML += '<div class="test-result error">修复后的选择器失败: ' + e.message + '</div>';
+            }
+        });
+    </script>
+</body>
+</html>
