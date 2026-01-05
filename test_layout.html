@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>布局测试页面</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success {
+            color: green;
+        }
+        .info {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mt-5">高二分天课表布局测试</h1>
+        
+        <!-- 已完成的调整 -->
+        <div class="test-section">
+            <h2>已完成的调整</h2>
+            <ul>
+                <li><span class="success">✓</span> 减小了卡片间距（从gap-6改为gap-4），使卡片更宽</li>
+                <li><span class="success">✓</span> 减小了课程标题字体大小（从text-xl改为text-lg）</li>
+                <li><span class="success">✓</span> 修复了CSS选择器中的斜杠问题</li>
+            </ul>
+        </div>
+
+        <!-- 测试步骤 -->
+        <div class="test-section">
+            <h2>测试步骤</h2>
+            <ol>
+                <li>点击下方链接打开分天课表页面</li>
+                <li>检查课程标题是否在一行显示</li>
+                <li>测试下载功能是否正常</li>
+            </ol>
+        </div>
+
+        <!-- 测试链接 -->
+        <div class="test-section">
+            <h2>测试链接</h2>
+            <a href="daily_schedule.html" class="btn btn-primary" target="_blank">打开分天课表页面</a>
+        </div>
+
+        <!-- 布局说明 -->
+        <div class="test-section">
+            <h2>布局说明</h2>
+            <p class="info">
+                为了避免课程标题换行，我进行了以下调整：
+            </p>
+            <ul>
+                <li>减小了卡片之间的间距，使每个卡片可以获得更多的水平空间</li>
+                <li>将课程标题的字体大小从text-xl（24px）减小到text-lg（18px）</li>
+            </ul>
+            <p class="info">
+                这些调整应该能够确保课程标题在一行显示，避免换行问题。
+            </p>
+        </div>
+    </div>
+</body>
+</html>
